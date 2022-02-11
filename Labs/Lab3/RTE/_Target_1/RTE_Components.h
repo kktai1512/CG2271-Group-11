@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'myISR' 
+ * Project: 'MyISR' 
  * Target:  'Target 1' 
  */
 

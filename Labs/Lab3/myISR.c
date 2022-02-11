@@ -1,23 +1,24 @@
 #include "MKL25Z4.h"
 
-#define SW_POS //PortD Pin 6
+#define SW_POS 6 //PortD Pin 6
 #define RED_LED 18 // PortB Pin 18
 #define GREEN_LED 19 // PortB Pin 19
 #define BLUE_LED 1 // PortD Pin 1
 
 #define MASK(x) (1 << (x))
 
-static volatile int counter = 0;
-char led_mapping[3] [2] = {{0, red_led}, {1, green_led}, {2, blue_led}};
-char led_control = 1;
-char int_count = 0;
+unsigned int counter = 0;
+
 typedef enum led_colors {
   red_led = RED_LED,
   green_led = GREEN_LED,
 	blue_led = BLUE_LED,
 } led_colors_t;
 
-void InitGPIO(void)
+char led_mapping[3] [2] = {{0, red_led}, {1, green_led}, {2, blue_led}};
+
+
+void initLED(void)
 {
 	// Enable Clock to PORTB and PORTD
 	SIM->SCGC5 |= ((SIM_SCGC5_PORTB_MASK) | (SIM_SCGC5_PORTD_MASK));
@@ -49,7 +50,7 @@ void PORTD_IRQHandler()
         counter = 0;
     }
     //Clear INT Flag
-    PORTD->ISFR |= MASK(SW_POS)
+    PORTD->ISFR |= MASK(SW_POS);
  }
 
 void offRGB (void)
@@ -64,7 +65,7 @@ void initSwitch(void)
     SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
 
     //* Select GPIO and enable pull-up resistors and interrupts on falling edges of pin connected to switch*/
-    PORTD->PCR[SW_POS] |= (PORT_PCR_MUX(1)| PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_IRQC(0x0a))
+    PORTD->PCR[SW_POS] |= (PORT_PCR_MUX(1)| PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_IRQC(0x0a));
     //PE is pull enable, PS then select it to be pullup
 
     // Set PORT D Switch bit to input
@@ -109,6 +110,6 @@ int main(void)
     offRGB();
     while(1)
     {
-        led_control(led_colors[counter][1]);
+        ledcontrol(led_mapping[counter][1]);
     } 
 }
