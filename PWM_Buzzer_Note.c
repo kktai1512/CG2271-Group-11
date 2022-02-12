@@ -1,10 +1,5 @@
 #include<stdio.h>
 
-enum color {red,blue,green};
-
-#define RED_LED			18  //portb pin 18
-#define GREEN_LED		19	//portb pin 19
-#define BLUE_LED 		1		//port d pin 1
 #define SW_POS			6
 #define MASK(x) 		(1<< (x))
 #include "MKL25Z4.h"                    // Device header
