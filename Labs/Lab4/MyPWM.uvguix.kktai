@@ -1883,11 +1883,11 @@
       </Doc>
       <Doc>
         <Name>.\Buzzer.c</Name>
-        <ColumnNumber>17</ColumnNumber>
-        <TopLine>1</TopLine>
-        <CurrentLine>66</CurrentLine>
+        <ColumnNumber>55</ColumnNumber>
+        <TopLine>40</TopLine>
+        <CurrentLine>57</CurrentLine>
         <Folding>1</Folding>
-        <ContractedFolders>4,13,18,27</ContractedFolders>
+        <ContractedFolders>4</ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
     </MDIGroup>
