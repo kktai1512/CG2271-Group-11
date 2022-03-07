@@ -1,3 +1,7 @@
+#define RED_LED 18 // PortB Pin 18
+#define GREEN_LED 19 // PortB Pin 19
+#define BLUE_LED 1 // PortD Pin 1
+
 /*----------------------------------------------------------------------------
  * CMSIS-RTOS 'main' function template
  *---------------------------------------------------------------------------*/
@@ -14,7 +18,11 @@ void app_main (void *argument) {
   // ...
   for (;;) {
       ledControl(RED_LED, led_on);
-      osDelay(1000);
+      osDelay(1000); 
+      /*Round-Robin Thread switching
+       -> go to RTX_config.h -> change OS_ROBIN_ENABLE to 0
+       then use normal delay function
+       */
       ledControl(RED_LED, led_off);
       osDelay(1000);
   }
@@ -32,7 +40,12 @@ int main (void) {
   for (;;) {}
 }
 
-/** led colors **/ 
+-
+/*----------------------------------------------------------------------------
+ * Led colors
+ *---------------------------------------------------------------------------*/
+
+
 void initLED(void)
 {
 	// Enable Clock to PORTB and PORTD
