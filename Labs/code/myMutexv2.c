@@ -4,7 +4,17 @@
 #define MASK(x) (1 << (x))
 
 #include "MKL25Z4.h"
+#include "cmsis_os2.h"
 
+osMutexId_t myMutex;
+
+
+static void delay (volatile uint32_t nof) {
+    while (nof!=0) {
+    __asm ("NOP");
+    nof--;
+    }
+}
 
 void offRGB (void)
 {
@@ -73,6 +83,7 @@ void led_red_thread (void *argument) {
  
   // ...
   for (;;) {
+      osMutexAcquire(myMutex, osWaitForever);
       ledControl(RED_LED, 'o');
       //osDelay(1000); 
       delay(0x80000);
@@ -83,6 +94,8 @@ void led_red_thread (void *argument) {
       ledControl(RED_LED, 'f');
       //osDelay(1000);
       delay(0x80000);
+
+      osMutexRelease(myMutex); //can be commented out
   }
 }
 
@@ -93,6 +106,8 @@ void led_green_thread (void *argument) {
  
   // ...
   for (;;) {
+      osMutexAcquire(myMutex, osWaitForever);
+
       ledControl(GREEN_LED, 'o');
       //osDelay(1000); 
       delay(0x80000);
@@ -103,6 +118,8 @@ void led_green_thread (void *argument) {
       ledControl(GREEN_LED, 'f');
       //osDelay(1000);
       delay(0x80000);
+
+      osMutexRelease(myMutex); // can be commented out
   }
 }
 
@@ -116,10 +133,10 @@ int main (void) {
   // System Initialization
   SystemCoreClockUpdate();
   // ...
- 
+  myMutex = osMutexNew(NULL); 
   osKernelInitialize();                 // Initialize CMSIS-RTOS
   //osThreadNew(app_main, NULL, NULL);    // Create application main thread
-  osThreadNew(led_red_thread, NULL, &thread_attr);
+  osThreadNew(led_red_thread, NULL, &thread_attr); 
   osThreadNew(led_green_thread, NULL, NULL);
   osKernelStart();                      // Start thread execution
   for (;;) {}

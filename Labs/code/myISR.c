@@ -1,12 +1,14 @@
 #include "MKL25Z4.h"
+
+#define SW_POS 6 //PortD Pin 6
 #define RED_LED 18 // PortB Pin 18
 #define GREEN_LED 19 // PortB Pin 19
 #define BLUE_LED 1 // PortD Pin 1
+
 #define MASK(x) (1 << (x))
 
-/*----------------------------------------------------------------------------
- * Led colors
- *---------------------------------------------------------------------------*/
+unsigned int counter = 0;
+
 typedef enum led_colors {
   red_led = RED_LED,
   green_led = GREEN_LED,
@@ -14,6 +16,7 @@ typedef enum led_colors {
 } led_colors_t;
 
 char led_mapping[3] [2] = {{0, red_led}, {1, green_led}, {2, blue_led}};
+
 
 void initLED(void)
 {
@@ -34,20 +37,49 @@ void initLED(void)
 	PTD->PDDR |= MASK(BLUE_LED);
 }
 
+
+void PORTD_IRQHandler()
+{
+    // Clear Pending IRQ
+    NVIC_ClearPendingIRQ(PORTD_IRQn);
+    // Updating some variable / flag
+    if (counter < 2) {
+        counter++;
+    }
+    else {
+        counter = 0;
+    }
+    //Clear INT Flag
+    PORTD->ISFR |= MASK(SW_POS);
+ }
+
 void offRGB (void)
 {
  PTB->PSOR = (MASK (RED_LED) | MASK (GREEN_LED));
  PTD->PSOR = MASK (BLUE_LED) ;
 }
 
-
-
-
-void ledControl (led_colors_t colour, char onOff)
+void initSwitch(void)
 {
-    if (onOff == 'f') {
-        return;
-    }
+    // enable clock for PortD
+    SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
+
+    //* Select GPIO and enable pull-up resistors and interrupts on falling edges of pin connected to switch*/
+    PORTD->PCR[SW_POS] |= (PORT_PCR_MUX(1)| PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_IRQC(0x0a));
+    //PE is pull enable, PS then select it to be pullup
+
+    // Set PORT D Switch bit to input
+    PTD->PDDR &= ~MASK(SW_POS);
+
+    //Enable Interrupts
+    NVIC_SetPriority (PORTD_IRQn, 2);
+    NVIC_ClearPendingIRQ (PORTD_IRQn);
+    NVIC_EnableIRQ (PORTD_IRQn);
+}
+
+void ledcontrol (led_colors_t colour)
+{
+    offRGB () ;
     switch (colour)
     {
     case RED_LED:
@@ -63,43 +95,21 @@ void ledControl (led_colors_t colour, char onOff)
         offRGB ();
     }
 }
-/*----------------------------------------------------------------------------
- * CMSIS-RTOS 'main' function template
- *---------------------------------------------------------------------------*/
- 
-#include "RTE_Components.h"
-#include  CMSIS_device_header
-#include "cmsis_os2.h"
- 
-/*----------------------------------------------------------------------------
- * Application main thread
- *---------------------------------------------------------------------------*/
-void app_main (void *argument) {
- 
-  // ...
-  for (;;) {
-      ledControl(RED_LED, 'o');
-      osDelay(1000); 
-      /*Round-Robin Thread switching
-       -> go to RTX_config.h -> change OS_ROBIN_ENABLE to 0
-       then use normal delay function
-       */
-      ledControl(RED_LED, 'o');
-      osDelay(1000);
-  }
-}
- 
-int main (void) {
- 
-  // System Initialization
-  SystemCoreClockUpdate();
-  // ...
- 
-  osKernelInitialize();                 // Initialize CMSIS-RTOS
-  osThreadNew(app_main, NULL, NULL);    // Create application main thread
-  osKernelStart();                      // Start thread execution
-  for (;;) {}
+
+static void delay (volatile uint32_t nof) {
+    while (nof!=0) {
+    __asm ("NOP");
+    nof--;
+    }
 }
 
-
-
+int main(void)
+{
+    initSwitch();
+    initLED();
+    offRGB();
+    while(1)
+    {
+        ledcontrol(led_mapping[counter][1]);
+    } 
+}
