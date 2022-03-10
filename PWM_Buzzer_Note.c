@@ -48,7 +48,11 @@ void initPWM()
 	
 }
 
-int notes[]={262,294,330,349,392,440,494}; //C,D,E,F,G,A,B
+int notes[]={262,294,330,349,392,440,494,0}; //C,D,E,F,G,A,B,blank
+
+int score[]={0,0,4,4,5,5,4,7,3,3,2,2,1,1,0,7
+	4,4,3,3,2,2,1,7,4,4,3,3,2,2,1,7,
+	0,0,4,4,5,5,4,7,3,3,2,2,1,1,0,7}
 
 static void delay(volatile uint32_t nof)
 {
@@ -66,10 +70,12 @@ int main(void)
 	
 	while(1) //output each frequency at fixed intervals
 	{			
-		for (int i; i<7;i++){
-			TPM1_C0V = freq_to_mod(notes[i],256)/2;
-			TPM1->MOD = freq_to_mod(notes[i],256);
+		for (int i; i<47;i++){
+			TPM1_C0V = freq_to_mod(notes[score[i]],256)/2;
+			TPM1->MOD = freq_to_mod(notes[score[i]],256);
 			delay(0x80000);
+			if (i==7)
+				i=0
 	  }
   }
 }
