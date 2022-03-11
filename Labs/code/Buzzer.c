@@ -55,7 +55,6 @@ void initPWM(void)
 	TPM1->SC &= ~(TPM_SC_CPWMS_MASK);
 	//edge_or_level_select, channel mode select
 	TPM1_C0SC &= ~ ((TPM_CnSC_ELSB_MASK) | (TPM_CnSC_ELSA_MASK) | (TPM_CnSC_MSB_MASK));
-	
 	TPM1_C0SC |= (TPM_CnSC_ELSB(1) | TPM_CnSC_MSB(1));
 }
 
