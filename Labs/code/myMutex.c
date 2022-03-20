@@ -15,7 +15,7 @@ void offRGB (void)
 typedef enum led_colors {
   red_led = RED_LED,
   green_led = GREEN_LED,
-	blue_led = BLUE_LED,
+  blue_led = BLUE_LED,
 } led_colors_t;
 
 char led_mapping[3] [2] = {{0, red_led}, {1, green_led}, {2, blue_led}};
