@@ -3,11 +3,11 @@
 <title>Static Call Graph - [.\Objects\MyPWM.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MyPWM.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Mar 07 18:15:08 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Mar 18 16:08:55 2022
 <BR><P>
-<H3>Maximum Stack Usage =         60 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =         44 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-__rt_entry_main &rArr; main &rArr; playNotes &rArr; freq_to_mod &rArr; __aeabi_fdiv
+__rt_entry_main &rArr; main &rArr; freq_to_mod &rArr; __aeabi_fdiv
 <P>
 <H3>
 Functions with no stack information
@@ -184,8 +184,8 @@ Global Symbols
 <P><STRONG><a name="[71]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000009))
 
 <P><STRONG><a name="[39]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60 + Unknown Stack Size
-<LI>Call Chain = __rt_entry_main &rArr; main &rArr; playNotes &rArr; freq_to_mod &rArr; __aeabi_fdiv
+<BR><BR>[Stack]<UL><LI>Max Depth = 44 + Unknown Stack Size
+<LI>Call Chain = __rt_entry_main &rArr; main &rArr; freq_to_mod &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exit
 <LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -379,15 +379,14 @@ Global Symbols
 <P><STRONG><a name="[40]"></a>__aeabi_i2f</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, fflti.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f_normalise
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;freq_to_mod
+<BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;freq_to_mod
 </UL>
 
 <P><STRONG><a name="[7b]"></a>_fflt</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, fflti.o(.text), UNUSED)
 
-<P><STRONG><a name="[42]"></a>__aeabi_ui2f</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, fflti.o(.text))
+<P><STRONG><a name="[42]"></a>__aeabi_ui2f</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, fflti.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f_normalise
-</UL>
-<BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;playNotes
 </UL>
 
 <P><STRONG><a name="[7c]"></a>_ffltu</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, fflti.o(.text), UNUSED)
@@ -470,30 +469,23 @@ Global Symbols
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2iz
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
 </UL>
-<BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;playNotes
+<BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[4f]"></a>initPWM</STRONG> (Thumb, 180 bytes, Stack size 0 bytes, buzzer.o(i.initPWM))
+<P><STRONG><a name="[4f]"></a>initPWM</STRONG> (Thumb, 174 bytes, Stack size 0 bytes, buzzer.o(i.initPWM))
 <BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, buzzer.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = main &rArr; playNotes &rArr; freq_to_mod &rArr; __aeabi_fdiv
+<P><STRONG><a name="[3a]"></a>main</STRONG> (Thumb, 102 bytes, Stack size 0 bytes, buzzer.o(i.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = main &rArr; freq_to_mod &rArr; __aeabi_fdiv
 </UL>
-<BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
-<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;playNotes
+<BR>[Calls]<UL><LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f
+<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initPWM
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;freq_to_mod
+<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
-</UL>
-
-<P><STRONG><a name="[50]"></a>playNotes</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, buzzer.o(i.playNotes))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = playNotes &rArr; freq_to_mod &rArr; __aeabi_fdiv
-</UL>
-<BR>[Calls]<UL><LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
-<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;freq_to_mod
-</UL>
-<BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[4d]"></a>__aeabi_fmul</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, fmul.o(x$fpl$fmul))
@@ -506,7 +498,13 @@ Global Symbols
 <P>
 <H3>
 Local Symbols
-</H3><P>
+</H3>
+<P><STRONG><a name="[50]"></a>delay</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, buzzer.o(i.delay))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = delay
+</UL>
+<BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+<P>
 <H3>
 Undefined Global Symbols
 </H3>

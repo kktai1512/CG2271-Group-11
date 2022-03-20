@@ -71,8 +71,8 @@ int main(void)
 	while(1) //output each frequency at fixed intervals
 	{			
 		for (int i; i<47;i++){
-			TPM1_C0V = freq_to_mod(notes[score[i]],128)/2;
-			TPM1->MOD = freq_to_mod(notes[score[i]],128);
+			TPM1_C0V = freq_to_mod(notes[score[i]],256)/2;
+			TPM1->MOD = freq_to_mod(notes[score[i]],256);
 			delay(0x80000);
 			if (i==7)
 				i=0;
