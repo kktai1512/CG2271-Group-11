@@ -89,15 +89,17 @@ void loop(){
               Serial.println("GPIO 26 off");
               output26State = "off";
               digitalWrite(output26, LOW);
-              Serial2.write(0x03);
+              Serial2.write(0x01);
             } else if (header.indexOf("GET /27/on") >= 0) {
               Serial.println("GPIO 27 on");
               output27State = "on";
               digitalWrite(output27, HIGH);
+               Serial2.write(0x02);
             } else if (header.indexOf("GET /27/off") >= 0) {
               Serial.println("GPIO 27 off");
               output27State = "off";
               digitalWrite(output27, LOW);
+               Serial2.write(0x01);
             }
             
             // Display the HTML web page
