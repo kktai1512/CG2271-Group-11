@@ -20,24 +20,21 @@ void toggleLED(void) {
 void SysTick_Handler(void) {
     if (running) {
         shiftLED();
-        toggle = !toggle;
+        toggle = !toggle;                           // 1 cycle delay for 
         if (toggle) {
             toggleLED();
-        }
-        
+        }        
     }
     else {
         toggleLED();
         for (int j = 0; j < NUM_GREEN; j++) {
-            PTC->PSOR |= (MASK(led[j]));                // On all LEDs
+            PTC->PSOR |= (MASK(led[j]));            // On all LEDs
         }
     }
 }
 
-void InitLED(void) { 
-    // Enable Clock to PORTC 
-    SIM->SCGC5 |= (SIM_SCGC5_PORTC_MASK); 
-
+void InitLED(void) {
+    SIM->SCGC5 |= (SIM_SCGC5_PORTC_MASK);           // Enable Clock to PORTC 
     for (int j = 0; j < NUM_LED; j++) {
         PORTC->PCR[led[j]] &= ~PORT_PCR_MUX_MASK;   // Configure MUX settings to make all pins GPIO
         PORTC->PCR[led[j]] |= PORT_PCR_MUX(1);
@@ -49,6 +46,6 @@ void InitLED(void) {
 int main(void) {
     InitLED();
     SystemCoreClockUpdate();
-    SysTick_Config(SystemCoreClock / 4);
+    SysTick_Config(SystemCoreClock / 4);            //250 ms interrupts
     while(1);
 }
