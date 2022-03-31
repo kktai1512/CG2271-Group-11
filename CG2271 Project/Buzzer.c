@@ -4,8 +4,8 @@
 #define SW_POS			6
 #define MASK(x) 		(1<< (x))
 #include "MKL25Z4.h"                    // Device header
-#define PTB0_Pin 0
-#define PTB1_Pin 1
+#define PTC8_Pin 8
+#define PTC9_Pin 9
 #define arrayLength(array) (sizeof((array))/sizeof((array)[0]))
 
 
@@ -20,17 +20,17 @@ int freq_to_mod(float freq, float pre) {
 
 void initPWM()
 {
-	//eNABLE CLOCK FOR PORTB
-	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+	//eNABLE CLOCK FOR PORTC updated
+	SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK;
 	
-	PORTB->PCR[PTB0_Pin] &= ~PORT_PCR_MUX_MASK;
-	PORTB->PCR[PTB0_Pin] |= PORT_PCR_MUX(3);
+	PORTB->PCR[PTC8_Pin] &= ~PORT_PCR_MUX_MASK;
+	PORTB->PCR[PTC8_Pin] |= PORT_PCR_MUX(3);
 	
-	PORTB->PCR[PTB1_Pin] &= ~PORT_PCR_MUX_MASK;
-	PORTB->PCR[PTB1_Pin] |= PORT_PCR_MUX(3);
+	PORTB->PCR[PTC9_Pin] &= ~PORT_PCR_MUX_MASK;
+	PORTB->PCR[PTC9_Pin] |= PORT_PCR_MUX(3);
 	
 	//enable clock for timer1
-	SIM->SCGC6 |= SIM_SCGC6_TPM1_MASK;
+	SIM->SCGC6 |= SIM_SCGC6_TPM0_MASK;
 	
 	//select clock for tpm module
 	SIM->SOPT2 &= ~SIM_SOPT2_TPMSRC_MASK;
