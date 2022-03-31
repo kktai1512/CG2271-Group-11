@@ -4,8 +4,8 @@
 #define SW_POS			6
 #define MASK(x) 		(1<< (x))
 #include "MKL25Z4.h"                    // Device header
-#define PTB0_Pin 0
-#define PTB1_Pin 1
+#define PTC8_Pin 8
+#define PTC9_Pin 9
 #define arrayLength(array) (sizeof((array))/sizeof((array)[0]))
 
 int notes[]={262,294,330,349,392,440,494,9999}; //C,D,E,F,G,A,B,blank
