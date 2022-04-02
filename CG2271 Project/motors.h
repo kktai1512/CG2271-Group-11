@@ -1,4 +1,6 @@
 #include "basicConfig.h"
+#include "RTE_Components.h"
+#include "cmsis_os2.h"
 //M3 AND M4 ARE REAR
 #define PTB0 0 //m3
 #define PTB1 1 //m3
@@ -35,3 +37,4 @@ void backward(int percent);
 void initMotorPWM(void);
 void stop();
 void move(uint8_t);
+void selfdrive(void);

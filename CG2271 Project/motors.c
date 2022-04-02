@@ -1,4 +1,5 @@
 #include "motors.h"
+
 int mod_val = 7500;
 
 void m1_forward(int percent) {
@@ -175,12 +176,53 @@ void move(uint8_t rx_data) {
 			left(20);
 			break;
 		case 0b0011:
-			forward(20);
+			forward(70);
 			break;
 		case 0b0100:
 			backward(20);
 			break;
+		case 0b111:
+			selfdrive();
 	}
+}
+void selfdrive(void) {
+		stop();
+		left(100);
+		osDelay(0x2000);
+	stop();
+	osDelay(0x500);
+		forward(100);
+		osDelay(0x200);
+	stop();
+	osDelay(0x500);
+		right(100);
+		osDelay(0x1000);
+	stop();
+	osDelay(0x500);
+	forward(100);
+		osDelay(0x200);
+	stop();
+	osDelay(0x500);
+		right(100);
+		osDelay(0x1000);
+	stop();
+	osDelay(0x500);
+	forward(100);
+		osDelay(0x200);
+	stop();
+	osDelay(0x500);
+		right(100);
+		osDelay(0x1000);
+		stop();
+		osDelay(0x500);
+	forward(100);
+		osDelay(0x200);
+		stop();
+		osDelay(0x500);
+		forward(100);
+		osDelay(0x500);
+		stop();
+	
 }
 
 /*
