@@ -1,10 +1,10 @@
 #include "MKL25Z4.h"
 #define MASK(x) (1 << (x))
 
-#define ECHO_IN 1 // PortA Pin 1
+#define ECHO_IN 1 // PortA Pin 13
 #define TRIG_OUT 4 // PortD Pin 4
 
-#define SPEED_OF_SOUND 343000.0 // 343 m/s
+#define SPEED_OF_SOUND 343000.0 // 343 cm/s
 #define PRESCALER 16
 
 #define uS(x)									(48 * x)
@@ -15,8 +15,8 @@ volatile int active = 0;
 volatile uint8_t sensorCount = 0;
 
 /*----------------------------------------------------------------------------
-* Functions
-*---------------------------------------------------------------------------*/
+ * Functions
+ *---------------------------------------------------------------------------*/
 
 
 void initTimer(void) {
@@ -60,20 +60,20 @@ static void resetTimer(void) {
 
 static void initUltrasonic(void) {
 
-   //enable clock for echo and trig
-   SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
-   SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
+    //enable clock for echo and trig
+    SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
+    SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
 
-   //set port a to timer mode (input capture)
-   PORTA->PCR[ECHO_IN] &= ~PORT_PCR_MUX_MASK;
-   PORTA->PCR[ECHO_IN] |= PORT_PCR_MUX(3);
+    //set port a to timer mode (input capture)
+    PORTA->PCR[ECHO_IN] &= ~PORT_PCR_MUX_MASK;
+    PORTA->PCR[ECHO_IN] |= PORT_PCR_MUX(3);
 
-   //set to GPIO mode
-   PORTD->PCR[TRIG_OUT] &= ~PORT_PCR_MUX_MASK;
-   PORTD->PCR[TRIG_OUT] |= PORT_PCR_MUX(1);
+    //set to GPIO mode
+    PORTD->PCR[TRIG_OUT] &= ~PORT_PCR_MUX_MASK;
+    PORTD->PCR[TRIG_OUT] |= PORT_PCR_MUX(1);
 
-   PTA->PDDR &= ~MASK(ECHO_IN);
-   PTD->PDDR |= MASK(TRIG_OUT);
+    PTA->PDDR &= ~MASK(ECHO_IN);
+    PTD->PDDR |= MASK(TRIG_OUT);
 }
 
 void delay(volatile uint32_t nof) {
@@ -118,10 +118,10 @@ void TPM2_IRQHandler(void) {
 }
 
 int main (void) {
-   initUltrasonic();
-   initTimer();
-   while(1) {
-     pulse();
+    initUltrasonic();
+    initTimer();
+    while(1) {
+      pulse();
 			delay(0x20000);
-   }
+    }
 }

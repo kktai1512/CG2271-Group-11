@@ -98,35 +98,35 @@ void loop() {
   {
     response = "WiFi Connected: " + ip_address;
   }
-  if(req.indexOf("onRed") != -1)
+  if(req.indexOf("stop") != -1)
   {
     digitalWrite(output26, HIGH);
-    response = "RED LED ON";
-    Serial2.write(0x01);
+    response = "STOP";
+    Serial2.write(0x0000);
   }
-  if(req.indexOf("offRed") != -1)
+  if(req.indexOf("right") != -1)
   {
     digitalWrite(output26, LOW);
-    response = "RED LED OFF";
-    Serial2.write(0x00);
+    response = "RIGHT";
+    Serial2.write(0b0001);
   }  
-  if(req.indexOf("onGreen") != -1)
+  if(req.indexOf("left") != -1)
   {
     digitalWrite(output26, HIGH);
-    response = "GREEN LED ON";
-    Serial2.write(0x03);
+    response = "LEFT";
+    Serial2.write(0b0010);
   }
-  if(req.indexOf("offGreen") != -1)
+  if(req.indexOf("forward") != -1)
   {
     digitalWrite(output26, LOW);
-    response = "GREEN LED OFF";
-    Serial2.write(0x32);
+    response = "FORWARD";
+    Serial2.write(0b0011);
   }
-  if(req.indexOf("onBlue") != -1)
+  if(req.indexOf("backward") != -1)
   {
     digitalWrite(output26, HIGH);
-    response = "BLUE LED ON";
-    Serial2.write(0x35);
+    response = "BACKWARD";
+    Serial2.write(0b0100);
   }
   if(req.indexOf("offBlue") != -1)
   {
