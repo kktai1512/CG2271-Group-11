@@ -11,6 +11,15 @@
 #define PTD2 2 //m1
 #define PTD0 0 //m1
 
+#define STOP 0
+#define RIGHT 1
+#define LEFT 2
+#define FORWARD 3
+#define REVERSE 4
+#define F_RIGHT 5
+#define F_LEFT 6
+#define END 10
+
 void m1_forward(int percent);
 void m1_backward(int percent);
 void m2_forward(int percent);
@@ -23,6 +32,6 @@ void rearForward(int percent);
 void rearBackward(int percent);
 void forward(int percent);
 void backward(int percent);
-void initPWM(void);
+void initMotorPWM(void);
 void stop();
 void move(uint8_t);

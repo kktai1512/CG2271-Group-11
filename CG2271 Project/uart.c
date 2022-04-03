@@ -1,6 +1,8 @@
-#include "uart.h"
 
-volatile uint8_t rx_interruptData =0;
+#include "uart.h"
+//volatile uint8_t rx_interruptData =0;
+//rx_interruptData =0;
+//uartData = {1,0};
 
 void initUART2(uint32_t baud_rate) {
 	
@@ -29,6 +31,15 @@ void initUART2(uint32_t baud_rate) {
 	//enabling the transmitter and receiver
 	UART2->C2 |= ((UART_C2_TE_MASK) | (UART_C2_RE_MASK));
 	
+		
+		NVIC_SetPriority(UART2_IRQn, 0);
+
+	NVIC_ClearPendingIRQ(UART2_IRQn);
+
+	NVIC_EnableIRQ(UART2_IRQn);
+	
+	UART2->C2 |= UART_C2_RIE_MASK;
+	
 }
 
 void UART2_Transmit_Poll(uint8_t data) {
@@ -43,10 +54,3 @@ uint8_t UART2_Receive_Poll(void) {
 
 
 
-void UART2_IRQHandler() {
-	NVIC_ClearPendingIRQ(UART2_IRQn);
-	if (UART2->S1 & UART_S1_RDRF_MASK) {
-		rx_interruptData = UART2->D;
-	}
-
-}

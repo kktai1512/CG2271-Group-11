@@ -71,7 +71,7 @@ void stop() {
 }
 
 /*intiPWM() */
-void initPWM(void)
+void initMotorPWM(void)
 {
 	//enable clock
 	SIM->SCGC5 |= ((SIM_SCGC5_PORTB_MASK) |

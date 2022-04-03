@@ -2,6 +2,8 @@
 ".\objects\motors.o"
 ".\objects\project.o"
 ".\objects\uart.o"
+".\objects\buzzer.o"
+".\objects\led.o"
 "..\..\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\RTOS2\RTX\Library\ARM\RTX_CM0.lib"
 ".\objects\rtx_lib.o"
 ".\objects\rtx_config.o"

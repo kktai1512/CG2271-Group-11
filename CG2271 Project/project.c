@@ -1,9 +1,39 @@
-#include<stdio.h>
 #include "MKL25Z4.h"
 #include "motors.h"
 #include "uart.h"
+#include "led.h"
+#include "Buzzer.h"
+#include "RTE_Components.h"
+#include "cmsis_os2.h"
+#include CMSIS_device_header
+
+volatile uint8_t rx_interruptData;
+volatile myDataPacket uartData = {1,0} ;
+
+//message queue 
+osMessageQueueId_t redMessage, greenMessage, motorMessage, buzzerMessage, controlMessage;
+
+void UART2_IRQHandler() {
+	
+	NVIC_ClearPendingIRQ(UART2_IRQn);
+	if (UART2->S1 & UART_S1_RDRF_MASK) {
+		rx_interruptData = UART2->D;
+		uartData.data = UART2->D;
+	}
+
+}
 
 volatile unsigned int counter=0;
+
+
+#define MSG_COUNT 1
+ //type struct for message data structure
+
+//typedef struct
+// { 
+//	 uint8_t cmd;
+//	 uint8_t data;
+// }myDataPacket;
 
 enum color {red,blue,green};
 
@@ -13,71 +43,8 @@ enum color {red,blue,green};
 #define SW_POS			6
 #define MASK(x) 		(1<< (x))
 
-void InitGPIO(void)
-{
-	//enable clock to portb and portd
-	//we need to do this because we are using the ports 
-	//and we need to enable clock to turn it on 
-	
-	//SYSTEM CLOCK GATING CONTROL REGISTER 5 CONTAINS THE PORTS WE NEED 
-	SIM->SCGC5 |= ((SIM_SCGC5_PORTB_MASK) | (SIM_SCGC5_PORTD_MASK));
-	//these variables are defined in the header file that we included
-	
-	//next we need to confiigure multilplexer settings to make these pins gpio
-	PORTB->PCR[RED_LED] &= ~PORT_PCR_MUX_MASK; //CLEAR EXISTING
-	PORTB->PCR[RED_LED] |= PORT_PCR_MUX(1); //SET 
-	
-	//NOW WE NEED TO DO THE SAME FOR GREEN LED UNDER PORTB
-	PORTB->PCR[GREEN_LED] &= ~PORT_PCR_MUX_MASK;
-	PORTB->PCR[GREEN_LED] |= PORT_PCR_MUX(1);
-	
-	//THE 1 THAT WE ARE SETTING REFERS TO US USING THE PORT FOR GPIO
-	//ONE STANDS FOR ALTERNATIVE- GPIO
-	PORTD->PCR[BLUE_LED] &= ~PORT_PCR_MUX_MASK;
-	PORTD->PCR[BLUE_LED] |= PORT_PCR_MUX(1);
-	
-	//NEXT WE NEED TO SET THE DATA DIRECTION REGISTERS FOR PORTB AND D 
-	//WE NEED TO SET AS OUTPUT, SO WE WILL BE SETTING PDDR AS 1
-	PTB->PDDR |= (MASK(RED_LED) | MASK(GREEN_LED));
-	PTD->PDDR |= MASK(BLUE_LED);
-	
-	//HERE WE ARE USING OR= BECAUSE WE NEED TO SET AS 1 - OUTPUT
-	//ELSE WE WILL BE using AND=
-	
-	//after initializing we turn off all leds
-	PTB->PDOR = (MASK(GREEN_LED)|MASK(RED_LED));
-	PTD->PDOR = MASK(BLUE_LED);
-}
 
 
-//now i need to write my own functions to turn on the led 
-//void led_control(color_t color)
-//enum color {red,blue,green};
-volatile char led_control =1;
-
-void led_on(enum color x)
-{
-	//since the leds are active low we need to 
-	//clear the bit inside to turn it on
-	switch(x)
-	{
-		case red:
-			PTB->PCOR |= MASK(RED_LED);
-			break;
-		case green:
-			PTB->PCOR |= MASK(GREEN_LED);
-			break;
-		case blue:
-			PTD->PCOR |= MASK(BLUE_LED);
-			break;
-	}			
-}
-
-void off_rgb()
-{
-	PTB->PDOR = (MASK(GREEN_LED)|MASK(RED_LED));
-	PTD->PDOR = MASK(BLUE_LED);
-}
 
 static void delay(volatile uint32_t nof) {
 	while(nof!=0) {
@@ -86,22 +53,156 @@ static void delay(volatile uint32_t nof) {
 	}
 }
 
+
+
+//motor control should be in a message
+//led requirements
+//when moving in any direction then the green ledmust be running 
+//the rear red led must be flashing continously at 250ms
+//when robot is stationary then all the green led must be on
+//the rear led must be flashing at a 500ms
+//buzzer requirements 
+	//the robot continous song tune from the start of the challenge till the end 
+	//once the challenge run is finished then play another tune to end
+
+/*----------------------------------------------------------------------------
+ * Application led_red thread
+ *---------------------------------------------------------------------------*/
+
+void redLedThread() {
+	myDataPacket myRxData;
+  for (;;) {
+		osMessageQueueGet(redMessage, &myRxData, NULL, osWaitForever);
+		if(myRxData.cmd == 1) {
+				//stopped state 
+				if(myRxData.data == 0) {
+					toggleRedLED();
+					osDelay(250);
+				}
+				//end state
+				else if(myRxData.data == 10) {
+					toggleRedLED(0);
+				}
+				else {
+					toggleRedLED();
+					osDelay(500);
+				}
+		} 
+	
+	}
+}
+
+/*----------------------------------------------------------------------------
+ * Application green led thread
+ *---------------------------------------------------------------------------*/
+
+void greenLedThread() {
+		myDataPacket myRxData;
+  for (;;) {
+		osMessageQueueGet(greenMessage, &myRxData, NULL, osWaitForever);
+		if(myRxData.cmd == 1) {
+				//stopped state 
+				if(myRxData.data == 0) {
+					setGreenLED(1);
+				}
+				//end state
+				else if(myRxData.data == 10) {
+					setGreenLED(0);
+				}
+				else {
+					shiftGreenLED();
+					osDelay(500);
+				}
+		} 
+	
+	}
+}
+
+/*----------------------------------------------------------------------------
+ * Application motor thread
+ *---------------------------------------------------------------------------*/
+
+void motorThread() {
+		myDataPacket myRxData;
+  for (;;) {
+		osMessageQueueGet(motorMessage, &myRxData, NULL, osWaitForever);
+		if(myRxData.cmd == 1) {
+				move(myRxData.data);
+		} 
+	
+	}
+}
+
+//continously play tune from start to end
+//unique tone once challenge has neded
+void buzzerThread() {
+	myDataPacket myRxData;
+	for(;;) {
+		osMessageQueueGet(buzzerMessage, &myRxData,NULL,osWaitForever);
+		if(myRxData.cmd == 1) {
+			if(myRxData.data == 10) //stopped state 
+			{
+				play_song(score2Size, score_2, notes);
+			}
+			else {
+				play_song(score1Size,score,notes);
+			}
+		}
+		}
+}
+
+void controlThread() {
+
+	for(;;) {
+		//osMessageQueueGet (controlMessage, &uartData, NULL, osWaitForever);
+		osMessageQueuePut (motorMessage, &uartData, NULL, 0);
+		osMessageQueuePut (redMessage, &uartData, NULL, 0);
+		osMessageQueuePut (greenMessage, &uartData, NULL, 0);
+		osMessageQueuePut (buzzerMessage, &uartData,NULL,0);
+	}
+}
+
+
+
+
 int main(void) {
+	
+	InitLED();
+  SystemCoreClockUpdate();
+  SysTick_Config(SystemCoreClock / 4);   
+	
 	uint8_t rx_data ;
 	//= 0x69
 	SystemCoreClockUpdate();
-	InitGPIO();
 	initUART2(BAUD_RATE);
+	initMotorPWM();
 	initPWM();
-	off_rgb();
+	
+	osKernelInitialize();
+	osThreadNew (greenLedThread,NULL,NULL);
+	osThreadNew (redLedThread,NULL,NULL);
+	osThreadNew (motorThread,NULL,NULL);
+	osThreadNew (controlThread,NULL,NULL);
+	osThreadNew (buzzerThread,NULL,NULL);
+	
+	
+	redMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
+	greenMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
+	motorMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
+	buzzerMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
+	controlMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
+	
+	osKernelStart();
+	for(;;) {
+		
+	}
+	
+	/*
 	while(1) {
-		//rx and tx
-		//UART2_Transmit_Poll(0x69);
-		//rearBackward(20);
 		rx_data = UART2_Receive_Poll();
 		move(rx_data);
-//		if(rx_data==3) off_rgb();
-//		else led_on(rx_data);
 		delay(0x80000);
 	}
+	*/
 }
+

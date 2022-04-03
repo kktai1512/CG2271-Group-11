@@ -412,6 +412,31 @@
               <FileType>5</FileType>
               <FilePath>.\basicConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>Buzzer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Buzzer.h</FilePath>
+            </File>
+            <File>
+              <FileName>led.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\led.h</FilePath>
+            </File>
+            <File>
+              <FileName>Buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Buzzer.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>myDataPacket.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\myDataPacket.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

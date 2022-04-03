@@ -22,22 +22,62 @@ Dialog DLL:      TARMCM1.DLL V1.14.1.0
  
 <h2>Project:</h2>
 C:\Users\matha\Desktop\CG2271 Project\CG2271 Project.uvprojx
-Project File Date:  03/25/2022
+Project File Date:  04/01/2022
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
 compiling project.c...
-motors.h(27): warning:  #1295-D: Deprecated declaration stop - give arg types
+basicConfig.h(1): warning:  #1-D: last line of file ends without a newline
+  #include "MKL25Z4.h"
+motors.h(36): warning:  #1295-D: Deprecated declaration stop - give arg types
   void stop();
-motors.h(28): warning:  #1-D: last line of file ends without a newline
+motors.h(37): warning:  #1-D: last line of file ends without a newline
   void move(uint8_t);
-uart.h(10): warning:  #1295-D: Deprecated declaration UART2_IRQHandler - give arg types
-  void UART2_IRQHandler() ;
-project.c: 3 warnings, 0 errors
+myDataPacket.h(6): warning:  #1-D: last line of file ends without a newline
+   }myDataPacket;
+basicConfig.h(1): warning:  #1-D: last line of file ends without a newline
+  #include "MKL25Z4.h"
+led.h(11): warning:  #1295-D: Deprecated declaration toggleRedLED - give arg types
+  void toggleRedLED();
+led.h(13): warning:  #1-D: last line of file ends without a newline
+  void offRedLED();
+led.h(13): warning:  #1295-D: Deprecated declaration offRedLED - give arg types
+  void offRedLED();
+basicConfig.h(1): warning:  #1-D: last line of file ends without a newline
+  #include "MKL25Z4.h"
+Buzzer.h(29): warning:  #1295-D: Deprecated declaration initPWM - give arg types
+  void initPWM();
+Buzzer.h(35): warning:  #1-D: last line of file ends without a newline
+  #endif
+project.c(158): warning:  #167-D: argument of type "volatile myDataPacket *" is incompatible with parameter of type "const void *"
+                osMessageQueuePut (motorMessage, &uartData, NULL, 0);
+project.c(159): warning:  #167-D: argument of type "volatile myDataPacket *" is incompatible with parameter of type "const void *"
+                osMessageQueuePut (redMessage, &uartData, NULL, 0);
+project.c(160): warning:  #167-D: argument of type "volatile myDataPacket *" is incompatible with parameter of type "const void *"
+                osMessageQueuePut (greenMessage, &uartData, NULL, 0);
+project.c(161): warning:  #167-D: argument of type "volatile myDataPacket *" is incompatible with parameter of type "const void *"
+                osMessageQueuePut (buzzerMessage, &uartData,NULL,0);
+project.c(182): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "osThreadFunc_t"
+        osThreadNew (greenLedThread,NULL,NULL);
+project.c(183): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "osThreadFunc_t"
+        osThreadNew (redLedThread,NULL,NULL);
+project.c(184): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "osThreadFunc_t"
+        osThreadNew (motorThread,NULL,NULL);
+project.c(185): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "osThreadFunc_t"
+        osThreadNew (controlThread,NULL,NULL);
+project.c(186): warning:  #167-D: argument of type "void (*)()" is incompatible with parameter of type "osThreadFunc_t"
+        osThreadNew (buzzerThread,NULL,NULL);
+project.c(174): warning:  #177-D: variable "rx_data"  was declared but never referenced
+        uint8_t rx_data ;
+project.c(277): warning:  #1-D: last line of file ends without a newline
+  */
+project.c(49): warning:  #177-D: function "delay"  was declared but never referenced
+  static void delay(volatile uint32_t nof) {
+project.c: 23 warnings, 0 errors
 linking...
-Program Size: Code=5604 RO-data=500 RW-data=5128 ZI-data=352  
-".\Objects\CG2271 Project.axf" - 0 Error(s), 3 Warning(s).
+Program Size: Code=11148 RO-data=564 RW-data=6124 ZI-data=356  
+".\Objects\CG2271 Project.axf" - 0 Error(s), 23 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -72,26 +112,26 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.3.0
 
    * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.1
+      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
+      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
       Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
+      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
+      Source file:   CMSIS\RTOS2\RTX\Template\main.c
       Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
       Source file:   CMSIS\RTOS2\RTX\Template\Events.c
       Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
       Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
-      Source file:   CMSIS\RTOS2\RTX\Template\main.c
-      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
       Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
-      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
       Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
-      Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
       Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM0.lib
+      Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
 
    * Component: Keil::Device:Startup:2.5.0
-      Include file:  Device\Source\system_MKL25Z4.h
-      Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
-Build Time Elapsed:  00:00:01
+      Source file:   Device\Source\ARM\startup_MKL25Z4.s
+      Include file:  Device\Source\system_MKL25Z4.h
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
