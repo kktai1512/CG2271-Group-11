@@ -87,7 +87,7 @@ static void delay(volatile uint32_t nof) {
 		nof--;
 	}
 }
-int stop_flag = 0;
+int stop_flag = 1;
 
 
 //motor control should be in a message
@@ -163,6 +163,7 @@ void motorThread() {
 		osMessageQueueGet(motorMessage, &myRxData, NULL, osWaitForever);
 		if(myRxData.cmd == 1) {
 				move(myRxData.data);
+				
 		}
 		
 	
@@ -194,18 +195,19 @@ void ultrasonicThread() {
 		if (myRxData.cmd == 1) {
 			pulse();
 		
-			if (distance <= 75 && stop_flag == 0) {
-				stop_flag = 1;
-			}
+//			if (distance >= 30 && distance <= 250 && stop_flag == 0) {
+//				stop_flag = 1;
+//			}
 			if (stop_flag == 1) {
 				//perform auto
 				uartData.data = 7;
+				
 			}
 			else {
 				uartData.data = 3;
 			}
 			osMessageQueuePut(motorMessage, &uartData, NULL, osWaitForever);
-			osDelay(0x200);
+			osDelay(0x150);
 		}
 	}
 

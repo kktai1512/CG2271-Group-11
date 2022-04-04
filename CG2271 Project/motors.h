@@ -38,3 +38,4 @@ void initMotorPWM(void);
 void stop();
 void move(uint8_t);
 void selfdrive(void);
+void circular(int delay);

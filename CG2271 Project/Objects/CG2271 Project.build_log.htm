@@ -27,7 +27,21 @@ Project File Date:  04/03/2022
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
-".\Objects\CG2271 Project.axf" - 0 Error(s), 0 Warning(s).
+compiling motors.c...
+basicConfig.h(1): warning:  #1-D: last line of file ends without a newline
+  #include "MKL25Z4.h"
+motors.h(38): warning:  #1295-D: Deprecated declaration stop - give arg types
+  void stop();
+motors.h(41): warning:  #1-D: last line of file ends without a newline
+  void circular(int delay);
+motors.c(284): warning:  #1-D: last line of file ends without a newline
+  */
+motors.c(158): warning:  #177-D: function "delay"  was declared but never referenced
+  static void delay(volatile uint32_t nof)
+motors.c: 5 warnings, 0 errors
+linking...
+Program Size: Code=11336 RO-data=564 RW-data=6144 ZI-data=360  
+".\Objects\CG2271 Project.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -81,7 +95,7 @@ Package Vendor: Keil
       Source file:   Device\Source\system_MKL25Z4.c
       Include file:  Device\Source\system_MKL25Z4.h
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

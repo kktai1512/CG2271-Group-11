@@ -186,43 +186,75 @@ void move(uint8_t rx_data) {
 	}
 }
 void selfdrive(void) {
-		stop();
-		left(100);
-		osDelay(0x2000);
-	stop();
-	osDelay(0x500);
-		forward(100);
-		osDelay(0x200);
-	stop();
-	osDelay(0x500);
-		right(100);
-		osDelay(0x1000);
-	stop();
-	osDelay(0x500);
-	forward(100);
-		osDelay(0x200);
-	stop();
-	osDelay(0x500);
-		right(100);
-		osDelay(0x1000);
-	stop();
-	osDelay(0x500);
-	forward(100);
-		osDelay(0x200);
-	stop();
-	osDelay(0x500);
-		right(100);
-		osDelay(0x1000);
-		stop();
-		osDelay(0x500);
-	forward(100);
-		osDelay(0x200);
-		stop();
-		osDelay(0x500);
-		forward(100);
-		osDelay(0x500);
-		stop();
+	      stop();
+        osDelay(0x500);
 	
+        left(100);
+        osDelay(0x500);
+	
+        stop();
+        osDelay(0x500);
+	
+        forward(100);
+        osDelay(0x400);
+				
+        stop();
+        osDelay(0x500);
+	
+        right(100);
+        osDelay(0x875);
+	
+        stop();
+        osDelay(0x500);
+	
+        forward(100);
+        osDelay(0x400);
+				
+        stop();
+        osDelay(0x500);
+				
+        right(100);
+        osDelay(0x875);
+				
+        stop();
+        osDelay(0x500);
+				
+        forward(100);
+        osDelay(0x400);
+				
+        stop();
+        osDelay(0x500);
+				
+        right(100);
+        osDelay(0x800);
+				
+        stop();
+        osDelay(0x500);
+							
+        forward(100);
+        osDelay(0x400);
+				
+        stop();
+        osDelay(0x500);
+				
+				left(100);
+				osDelay(0x500);
+				
+				stop();
+				osDelay(0x500);
+				
+        //forward(100);
+        osDelay(0x700);
+				
+        stop();
+        osDelay(0xFFFFFFFF);
+}
+
+void circular(int delay){
+	rearForward(30);
+	right(30);
+	osDelay(delay);
+	stop();
 }
 
 /*
