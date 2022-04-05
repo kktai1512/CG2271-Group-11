@@ -62,12 +62,12 @@ void play_song(int size, int score[],int note[]){
 			if (score[i]<7){
 			TPM0_C4V = freq_to_mod(note[score[i]],256)/64;
 			TPM0->MOD = freq_to_mod(note[score[i]],256);
-			osDelay(1000);
+			osDelay(250);
 			}
 			else if (score[i]==7){
 		  TPM0_C4V = 0;
 			TPM0->MOD = 0;
-			osDelay(1000);
+			osDelay(250);
 			}
 	  }
 	}

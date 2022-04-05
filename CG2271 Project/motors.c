@@ -169,16 +169,16 @@ void move(uint8_t rx_data) {
 			stop();
 			break;
 		case 0b0001:
-			right(20);
+			right(50);
 			break;
 		case 0b0010:
-			left(20);
+			left(50);
 			break;
 		case 0b0011:
-			forward(20);
+			forward(50);
 			break;
 		case 0b0100:
-			backward(20);
+			backward(50);
 			break;
 	}
 }
