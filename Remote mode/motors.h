@@ -1,9 +1,7 @@
 #include "basicConfig.h"
 //M3 AND M4 ARE REAR
 #define PTB0 0 //m3
-#define PTB1 1 //m3
-#define PTE21 21 //m4
-#define PTE20 20 //m4
+
 
 //M1 AND M2 ARE FRONT
 #define PTD1 1 //	m2
@@ -35,3 +33,4 @@ void backward(int percent);
 void initMotorPWM(void);
 void stop();
 void move(uint8_t);
+void square();

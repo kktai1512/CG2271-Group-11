@@ -7,74 +7,17 @@
 #include "cmsis_os2.h"
 #include "ultrasonic.h"
 #include CMSIS_device_header
-int stop_flag = 0;
+
 volatile uint8_t rx_interruptData;
 volatile myDataPacket uartData = {1,0} ;
 
 volatile float distance = 1000.0;
 volatile int active = 0;
-
-volatile float distance2 = 1000.0;
-volatile int active2 = 0;
-
 volatile uint8_t sensorCount = 0;
-
-
-void TPM2_IRQHandler(void) {
-	NVIC_ClearPendingIRQ(TPM2_IRQn);
-	
-	if (stop_flag!=1) {
-	if (TPM2_C0SC & TPM_CnSC_CHF_MASK) {
-		TPM2_C0SC |= TPM_CnSC_CHF(1); // If CHF = channel is 1 when an event occur- cleared by writing 1 
-		if (active) {
-			active = 0;
-			float multiplier = (SPEED_OF_SOUND * PRESCALER)/48000000;
-			distance = ((TPM2_C0V) * multiplier)/2;
-			resetTimer();
-		}
-		else {
-			active = 1;
-			resetTimer();
-		}
-	}
-	else if (TPM2->SC & TPM_SC_TOF_MASK) {
-		TPM2->SC |= TPM_SC_TOF(1); // Checking for overflow so that it resets when hit and counter = 1 cycle.
-		if (active) {
-			active = 0;
-			distance = 1000;
-			resetTimer();
-		}
-	}
-}
-		////ultrasonic 2
-	if (stop_flag == 1) {
-	if (TPM2_C1SC & TPM_CnSC_CHF_MASK) {
-		TPM2_C1SC |= TPM_CnSC_CHF(1); // If CHF = channel is 1 when an event occur- cleared by writing 1 
-		if (active2) {
-			active2 = 0;
-			float multiplier = (SPEED_OF_SOUND * PRESCALER)/48000000;
-			distance2 = ((TPM2_C1V) * multiplier)/2;
-			resetTimer();
-		}
-		else {
-			active2 = 1;
-			resetTimer();
-		}
-	}
-	else if (TPM2->SC & TPM_SC_TOF_MASK) {
-		TPM2->SC |= TPM_SC_TOF(1); // Checking for overflow so that it resets when hit and counter = 1 cycle.
-		if (active2) {
-			active2 = 0;
-			distance2 = 1000;
-			resetTimer();
-		}
-	}
-}
-	}
-
+int stop_flag = 0;
 
 //message queue 
-osMessageQueueId_t redMessage, greenMessage, motorMessage, buzzerMessage, controlMessage, ultrasonicMessage, ultrasonic2Message;
+osMessageQueueId_t redMessage, greenMessage, motorMessage, buzzerMessage, controlMessage, ultrasonicMessage;
 
 void UART2_IRQHandler() {
 	
@@ -82,10 +25,31 @@ void UART2_IRQHandler() {
 	if (UART2->S1 & UART_S1_RDRF_MASK) {
 		rx_interruptData = UART2->D;
 		uartData.data = UART2->D;
-		if (UART2 -> D == 0b0011 ) {
-			uartData.cmd = 1;
 	}
+
 }
+void ultrasonicThread() {
+	myDataPacket myRxData;
+	for(;;){
+		osMessageQueueGet(ultrasonicMessage, &myRxData, NULL, osWaitForever);
+		if (myRxData.cmd == 1) {
+			pulse();
+		
+			if (distance >= 30 && distance <= 250 && stop_flag == 0) {
+				stop_flag = 1;
+			}
+			if (stop_flag == 1) {
+				//perform auto
+				uartData.data = 7;
+				
+			}
+			else {
+				uartData.data = 3;
+			}
+			osMessageQueuePut(motorMessage, &uartData, NULL, osWaitForever);
+			osDelay(0x150);
+		}
+	}
 
 }
 
@@ -146,7 +110,7 @@ void redLedThread() {
 					osDelay(250);
 				}
 				//end state
-				else if(myRxData.data == 10) {
+				else if(myRxData.data == 7) {
 					toggleRedLED(0);
 				}
 				else {
@@ -172,7 +136,7 @@ void greenLedThread() {
 					setGreenLED(1);
 				}
 				//end state
-				else if(myRxData.data == 10) {
+				else if(myRxData.data == 7) {
 					setGreenLED(0);
 				}
 				else {
@@ -184,18 +148,21 @@ void greenLedThread() {
 	}
 }
 
+
 /*----------------------------------------------------------------------------
  * Application motor thread
  *---------------------------------------------------------------------------*/
 
 void motorThread() {
-	myDataPacket myRxData;
+		myDataPacket myRxData;
   for (;;) {
 		osMessageQueueGet(motorMessage, &myRxData, NULL, osWaitForever);
 		if(myRxData.cmd == 1) {
 				move(myRxData.data);
-				
-		}
+//				if (myRxData.data == 8) {
+//					uartData.cmd = 0;
+//				}
+		} 
 		
 	
 	}
@@ -205,90 +172,48 @@ void motorThread() {
 //unique tone once challenge has neded
 void buzzerThread() {
 	myDataPacket myRxData;
+	int note_number = 0;
+	int stopped = 0;
 	for(;;) {
 		osMessageQueueGet(buzzerMessage, &myRxData,NULL,osWaitForever);
 		if(myRxData.cmd == 1) {
-			if(myRxData.data == 10) //stopped state 
-			{
-				play_song(score2Size, score_2, notes);
-			}
-			else {
-				play_song(score1Size,score,notes);
-			}
-		}
-		}
-}
-
-void ultrasonicThread() {
-	myDataPacket myRxData;
-	for(;;){
-		osMessageQueueGet(ultrasonicMessage, &myRxData, NULL, osWaitForever);
-		if (myRxData.cmd == 1 && stop_flag != 1) {
-			pulse();
-		
-			if (distance >= 30 && distance <= 250 && stop_flag == 0) {
-				stop_flag = 1;
-			}
-			if (stop_flag == 1) {
-				initTimer2();
-				osMessageQueuePut (ultrasonic2Message, &uartData, NULL, 0);
-			}
-			else {
-				//move forward
-				//uartData.data = 3;
-			}
-			//osMessageQueuePut(motorMessage, &uartData, NULL, osWaitForever);
-			osDelay(0x150);
-		}
-	}
-
-}
-
-void ultrasonic2Thread() {
-	myDataPacket myRxData;
-	for(;;){
-		osMessageQueueGet(ultrasonic2Message, &myRxData, NULL, osWaitForever);
-		if (myRxData.cmd == 1) {
-		
-			pulse2();
-			if (distance2 >= 30 && distance2 <= 250) {
+			if(myRxData.data == 7) //stopped state 
+			{	
+				if (stopped == 0) {
+					note_number = 0;
+					stopped = 1;
+				}
 				
 				
+				play_note(note_number, score2Size,score_2, notes);
+				note_number ++;
 			}
 			else {
-				//move forward
-				//uartData.data = 3;
+			
+				play_note(note_number, score1Size,score, notes);
+				note_number ++;
 			}
-			//osMessageQueuePut(motorMessage, &uartData, NULL, osWaitForever);
-			osDelay(0x150);
 		}
-	}
-
+		}
 }
-void controlThread() {
 
+void controlThread(){
+	
 	for(;;) {
-		//osMessageQueueGet (controlMessage, &uartData, NULL, osWaitForever);
-		//if we press start
-		//osMessageQueuePut (motorMessage, &uartData, NULL, 0);
-		osMessageQueuePut (ultrasonicMessage, &uartData, NULL, 0);
-		
-		/*
+		osMessageQueuePut (motorMessage, &uartData, NULL, 0);
 		osMessageQueuePut (redMessage, &uartData, NULL, 0);
 		osMessageQueuePut (greenMessage, &uartData, NULL, 0);
 		osMessageQueuePut (buzzerMessage, &uartData,NULL,0);
-		*/
+		osMessageQueuePut (ultrasonicMessage, &uartData,NULL,0);
+		
 	}
 }
-
-
-
 
 int main(void) {
 	
 	InitLED();
   SystemCoreClockUpdate();
-  //SysTick_Config(SystemCoreClock / 4);   
+  SysTick_Config(SystemCoreClock / 4);   
 	
 	uint8_t rx_data ;
 	//= 0x69
@@ -297,31 +222,18 @@ int main(void) {
 	initMotorPWM();
 	initPWM();
 	
-	initUltrasonic();
-	initUltrasonic2();
-	initTimer();
-	
 	osKernelInitialize();
-	/*
 	osThreadNew (greenLedThread,NULL,NULL);
 	osThreadNew (redLedThread,NULL,NULL);
-	osThreadNew (buzzerThread,NULL,NULL);
-	*/
-//	osThreadNew (motorThread,NULL,NULL);
+	osThreadNew (motorThread,NULL,NULL);
 	osThreadNew (controlThread,NULL,NULL);
-	osThreadNew (ultrasonicThread,NULL,NULL);
-	osThreadNew (ultrasonic2Thread,NULL,NULL);
-	
-	/*
+	osThreadNew (buzzerThread,NULL,NULL);
+
 	redMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
 	greenMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
-	buzzerMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
-	*/
-	
 	motorMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
+	buzzerMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
 	controlMessage = osMessageQueueNew(MSG_COUNT,sizeof(myDataPacket), NULL);
-	ultrasonicMessage = osMessageQueueNew(MSG_COUNT, sizeof(myDataPacket), NULL);
-	ultrasonic2Message = osMessageQueueNew(MSG_COUNT, sizeof(myDataPacket), NULL);
 	
 	osKernelStart();
 	for(;;) {

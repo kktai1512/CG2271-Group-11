@@ -437,6 +437,16 @@
               <FileType>5</FileType>
               <FilePath>.\myDataPacket.h</FilePath>
             </File>
+            <File>
+              <FileName>ultrasonic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ultrasonic.h</FilePath>
+            </File>
+            <File>
+              <FileName>ultrasonic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ultrasonic.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

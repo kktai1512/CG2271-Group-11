@@ -7,6 +7,7 @@
 #define MASK(x) 		(1<< (x))
 #define PTC8_Pin 8
 #define PTC9_Pin 9
+
 #define arrayLength(array) (sizeof((array))/sizeof((array)[0]))
 
 
@@ -32,4 +33,6 @@ void play_song(int size, int arr[],int arr2[]);
 	
 static void delay(volatile uint32_t nof);	
 
+void stop_song();
+	void play_note(int note_number, int size,int score[], int note[]);
 #endif
