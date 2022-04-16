@@ -194,78 +194,27 @@ int volatile counter = 0;
 void ultrasonicThread() {
 	for(;;){
 				osSemaphoreAcquire(selfDriveSem, osWaitForever);
-        //only once
-//			if (stop_flag == 1) {
-//					left(90);
-//					delay(800);
-//					stop();
-//				
-//					forward(50);
-//					osDelay(100);
-//					stop();
-//				
-//					right(90);
-//					osDelay(1500);
-//					stop();
-//				
-//					stop_flag = 0;
-//				counter++;
-//					
-//			}
-//			if (stop_flag == 0) {
-//			if (counter < 5){
 				if (stop_flag == 0) {
 					pulse();
-					if (distance >= 30 && distance <= 210) {
+					if (distance >= 30 && distance <= 265) {
 							uartData.data = 0;
-							osDelay(2000);
+							osDelay(600);
 							stop_flag = 1;
-							uartData.data = 9;
+							uartData.data = 10;
 							
 					}
 					
-					 else if (distance >= 210) { //move forward
+					 else if (distance >= 265) { //move forward
 							uartData.data = 0b1111;
 							osSemaphoreRelease(selfDriveSem);
 							
 					}
 				} 
-				
-					 
-//				if(stop_flag == 1 && counter < 5) {
-//						stop();
-//						move(0b011);
-//						osDelay(20000);
-//						counter++;
-//						stop();
-//						stop_flag = 0;
-//				}
-				
+			
         osDelay(0x150);}
     
 }
 
-//void selfDriveThread() {
-//	for(;;){
-//				osSemaphoreAcquire(selfDriveSquare, osWaitForever);
-//				//curve
-//				
-//				left(80);
-//				osDelay(1000);
-//				stop();
-//		
-//				forward(50);
-//				osDelay(800);
-//				stop();
-//		
-//				right(80);
-//				osDelay(2000);
-//				stop();
-//				
-//				counter ++;
-//				stop_flag = 0;
-//	}
-//}
 
 
   int main(void) {
@@ -289,8 +238,7 @@ void ultrasonicThread() {
 	osThreadNew (motorThread,NULL,NULL);
 	osThreadNew (buzzerThread,NULL,NULL);
   osThreadNew (ultrasonicThread, NULL, NULL);
-	//osThreadNew (selfDriveThread, NULL, NULL);
-	
+
 	
 	motorMessage = osMessageQueueNew(1,sizeof(myDataPacket), NULL);
 	selfDriveSem = osSemaphoreNew(1, 0, NULL);
@@ -302,11 +250,4 @@ void ultrasonicThread() {
 		
 	}
 	
-	/*
-	while(1) {
-		rx_data = UART2_Receive_Poll();
-		move(rx_data);
-		delay(0x80000);
-	}
-	*/
 }

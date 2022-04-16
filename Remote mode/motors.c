@@ -193,10 +193,10 @@ void move(uint8_t rx_data) {
 			stop();
 			break;
 		case 0b0001:
-			right(90);
+			right(100);
 			break;
 		case 0b0010:
-			left(90);
+			left(100);
 			break;
 		case 0b0011:
 			forward(50);
@@ -214,12 +214,14 @@ void move(uint8_t rx_data) {
 			right(100);
 			rearForward(40);
 			break;
-		case 0b1001:
+		case 0b1010:
 			osDelay(100);
 			triangle();
 			osDelay(10000000);
 		case 0b1111:
 			forward(25);
+		case 0b1001:
+			forward(100);
 	}
 }
 void triangle() {
@@ -228,7 +230,7 @@ void triangle() {
 	onetwenty2();
 	sixty();
 	forward(50);
-	osDelay(5000);
+	osDelay(4000);
 	stop();
 }
 void temp() {
@@ -248,43 +250,43 @@ void sixty() {
 	osDelay(650);
 	
 	stop();
-	osDelay(200);
+	osDelay(300);
 	
 	forward(50);
-	osDelay(1500);
+	osDelay(1000);
 	
 	stop();
-	osDelay(200);
+	osDelay(300);
 }
 
 void onetwenty() {
 	rearForward(55);
-	right(85);
-	osDelay(1500);
+	right(90);
+	osDelay(1100);
 	
 	stop();
-	osDelay(200);
-	
-	forward(50);
-	osDelay(1700);
-	
-	stop();
-	osDelay(200);
-}
-
-void onetwenty2() {
-	rearForward(55);
-	right(85);
-	osDelay(1500);
-	
-	stop();
-	osDelay(200);
+	osDelay(300);
 	
 	forward(50);
 	osDelay(1600);
 	
 	stop();
-	osDelay(200);
+	osDelay(300);
+}
+
+void onetwenty2() {
+	rearForward(55);
+	right(90);
+	osDelay(1100);
+	
+	stop();
+	osDelay(300);
+	
+	forward(50);
+	osDelay(1300);
+	
+	stop();
+	osDelay(300);
 }
 
 /*
