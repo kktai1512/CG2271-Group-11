@@ -88,43 +88,6 @@ void buzzerThread() {
  * Application motor thread
  *---------------------------------------------------------------------------*/
 osMessageQueueId_t motorMessage;
-void moveRefactored(uint8_t rx_data) {
-	int isMovingTemp = 1;
-	switch(rx_data) {
-		case 0b0000:
-			stop();
-			isMovingTemp = 0;
-			break;
-		case 0b0001:
-			right(90);
-			break;
-		case 0b0010:
-			left(90);
-			break;
-		case 0b0011:
-			forward(50);
-			break;
-		case 0b0100:
-			backward(50);
-			break;
-		case 0b101:
-			//swerve
-			left(100);
-			rearForward(40);
-			break;
-		case 0b110:
-			//swerve
-			right(100);
-			rearForward(40);
-			break;	
-		
-		case 0b1000:
-			move(0b1000);
-		
-			
-	}
-	isMoving = isMovingTemp;
-}
 void motorThread() {
 	myDataPacket myMotorRx;
   for (;;) {
@@ -148,7 +111,7 @@ void motorThread() {
         if (uartData.data == 7) {
             isEnd = 1;
         }
-				//if self-drive
+	
         if (uartData.data == 8) {
             isSelfDrive = 1;
             osSemaphoreRelease(selfDriveSem);
@@ -158,7 +121,7 @@ void motorThread() {
   }
 
 /*----------------------------------------------------------------------------
- * Ultrasonic thread
+ * Self-driving part
  *---------------------------------------------------------------------------*/
 	
 volatile float distance = 1000.0;
@@ -188,9 +151,10 @@ void TPM2_IRQHandler(void) {
 		}
 	}
 }
-
 int volatile stop_flag = 0;
-int volatile counter = 0;
+/*----------------------------------------------------------------------------
+ * Ultrasonic Thread
+ *---------------------------------------------------------------------------*/
 void ultrasonicThread() {
 	for(;;){
 				osSemaphoreAcquire(selfDriveSem, osWaitForever);
@@ -200,28 +164,23 @@ void ultrasonicThread() {
 							uartData.data = 0;
 							osDelay(600);
 							stop_flag = 1;
-							uartData.data = 10;
-							
+							uartData.data = 10;						
 					}
 					
 					 else if (distance >= 265) { //move forward
 							uartData.data = 0b1111;
-							osSemaphoreRelease(selfDriveSem);
-							
+							osSemaphoreRelease(selfDriveSem);					
 					}
 				} 
-			
-        osDelay(0x150);}
-    
+        osDelay(0x150);}  
 }
-
 
 
   int main(void) {
 	
 	InitLED();
-    SystemCoreClockUpdate();
-    SysTick_Config(SystemCoreClock / 4);   
+  SystemCoreClockUpdate();
+  SysTick_Config(SystemCoreClock / 4);   
 	
 	uint8_t rx_data ;
 
@@ -229,7 +188,7 @@ void ultrasonicThread() {
 	initMotorPWM();
 	initPWM();
 	initTimer();
-		initUltrasonic();
+	initUltrasonic();
 	
 	osKernelInitialize();
 	osThreadNew (controlThread,NULL,NULL);
